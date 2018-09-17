@@ -1,4 +1,4 @@
-from psycopg2 import *
+import psycopg2
 
 
 #def getweather(id):
@@ -11,7 +11,7 @@ class connectionStringFactory:
         self.db=db
         self.user=user
         self.password=password
-        self.connectionString=self.createConnString()
+        
         
     '''
     def test(self):
@@ -27,30 +27,31 @@ class connectionStringFactory:
         #cur.execute()
 
 class dataintable:
-    def __init__(self,connectionStringFactory):
+    def __init__(self,host,db,user,password):
 
-        self.connectionString=connectionStringFactory.connectionString
-
+        self.connectionString=connectionStringFactory(host,db,user,password).createConnString()
+        
     
     def tables(self):
-        conn= connect(self.connectionString)
+        conn= psycopg2.connect(self.connectionString)
         cur=conn.cursor()
         cur.execute("""
         SELECT table_name FROM information_schema.tables WHERE table_schema='public' 
         """)
+        listOfTables=cur.fetchall()
+        
+        return listOfTables
 
-        for listtables in cur.fetchall():
-            print (listtables)
-        cur.close()
-        conn.close()
+    def get(self):
+        conn= psycopg2.connect(self.connectionString)
+        cur=conn.cursor()
+        tablename=self.tables()[0][0]
+        cur.execute("SELECT * FROM %s",(tablename,))
+        
+        tableContent=cur.fetchall()
+        return tableContent
 
-    '''def get(self):
-        self.cursor.execute("""
-...     SELECT * FROM 
-...     """
-
-        )
-    '''
+    
     #def post(self,):
 
 
