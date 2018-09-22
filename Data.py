@@ -2,7 +2,25 @@ import psycopg2
 from psycopg2 import sql
 
 #def getweather(id):
+class Point:
+    def __init__(self,latitude:float,longitude:float):
+        self.latitude=latitude
+        self.longitude=longitude
 
+class Record:
+    def __init__(self,city:str, state:str, point:Point,temperature:int):
+        self.city=city
+        self.state=state
+        self.point=point
+        self.temp=temperature
+
+    def jsonToRecord(self,json):
+        return Record(
+            json['city'],
+            json['state'],
+            Point(json['point'][0],json['point'][1]),
+            json['temperature'],
+        )
 
 class connectionStringFactory:
     def __init__(self,host,db,user,password):
