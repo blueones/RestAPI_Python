@@ -1,6 +1,7 @@
 from flask import Flask, url_for,request
 import Data
 import json
+import jsonpickle
 
 
 app = Flask ("SunnyAPI")
@@ -14,7 +15,8 @@ def getallweather():
     
     connDatabase=Data.dataintable('localhost','postgres','sunny','sunny')
     listTables=connDatabase.get()
-    return listTables[0]
+    jsonfiedtabledata=jsonpickle.encode(listTables)
+    return jsonfiedtabledata
 
 
 @app.route('/',methods=['DELETE'])

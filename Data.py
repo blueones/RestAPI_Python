@@ -1,5 +1,5 @@
 import psycopg2
-
+from psycopg2 import sql
 
 #def getweather(id):
 
@@ -39,6 +39,8 @@ class dataintable:
         SELECT table_name FROM information_schema.tables WHERE table_schema='public' 
         """)
         listOfTables=cur.fetchall()
+        cur.close()
+        conn.close()
         
         return listOfTables
 
@@ -46,9 +48,14 @@ class dataintable:
         conn= psycopg2.connect(self.connectionString)
         cur=conn.cursor()
         tablename=self.tables()[0][0]
-        cur.execute("SELECT * FROM %s",(tablename,))
+        print (tablename)
+        cur.execute(sql.SQL("SELECT * FROM {}")
+        .format(sql.Identifier(tablename))
+        )
         
         tableContent=cur.fetchall()
+        cur.close()
+        conn.close()
         return tableContent
 
     
